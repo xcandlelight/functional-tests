@@ -54,6 +54,7 @@ public class JCommuneSeleniumConfig {
         capabilities.setCapability(CapabilityType.PLATFORM, getOs());
         capabilities.setBrowserName(getBrowser());
         capabilities.setVersion(getBrowserVersion());
+        capabilities.setCapability("max-duration", 10800);//max duration of a single test class in seconds (10800=3hrs)
 
         String seleniumUrl = getSeleniumUrl(defaultSeleniumServerUrl);
         LOGGER.info("{}", capabilities);

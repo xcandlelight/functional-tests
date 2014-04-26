@@ -30,7 +30,7 @@ import static org.jtalks.tests.jcommune.webdriver.page.Pages.topicPage;
  * @author masyan
  */
 public class TopicPage {
-    public static final String EMPTY_SUBJECT_ERROR = "may not be empty\n";
+    public static final String EMPTY_SUBJECT_ERROR = "(may not be empty\n)|(Не может быть пустым\n)";
     public static final String EMPTY_BODY_ERROR = "size must be between 2 and 20000\n";
     @FindBy(id = "subjectError")
     private WebElement subjectErrorMessage;
@@ -125,7 +125,8 @@ public class TopicPage {
             topicPage.getNewButton().click();
         } catch (NoSuchElementException e) {
             info("No such button found!");
-            throw new PermissionsDeniedException();
+            throw new PermissionsDeniedException("Couldn't find New Topic button. Here is the page source: \n"
+                    + driver.getPageSource());
         }
     }
 

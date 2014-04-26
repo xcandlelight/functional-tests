@@ -15,11 +15,22 @@
 
 package org.jtalks.tests.jcommune.webdriver.action;
 
+import junit.framework.AssertionFailedError;
+import org.jtalks.tests.jcommune.utils.DriverMethodHelp;
+import org.jtalks.tests.jcommune.webdriver.entity.user.User;
+import org.jtalks.tests.jcommune.webdriver.page.PrivateMessagesPage;
 import org.jtalks.tests.jcommune.webdriver.entity.privatemessage.PrivateMessage;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
+
+
+import static org.jtalks.tests.jcommune.utils.ReportNgLogger.info;
 import static org.jtalks.tests.jcommune.webdriver.page.Pages.*;
+import static org.testng.Assert.assertTrue;
 
 /**
  * Contains actions for private messages
@@ -29,24 +40,60 @@ import static org.jtalks.tests.jcommune.webdriver.page.Pages.*;
 public class PrivateMessages {
     private static final Logger LOGGER = LoggerFactory.getLogger(Topics.class);
 
-    public static PrivateMessage createPrivateMessage(PrivateMessage pm) {
-        openPrivateMessagesPage();
-        clickComposeMessage();
+    public static void sendPrivateMessage(PrivateMessage pm) {
+        mainPage.openPrivateMessages();
+        pmPage.clickComposeMessage();
         fillPrivateMessageFields(pm);
-        return pm;
+        pmPage.getSendButton().click();
     }
 
     private static void fillPrivateMessageFields(PrivateMessage pm) {
-        pmPage.getToField().sendKeys(pm.getReceiver().getUsername());
-        pmPage.getTitleField().sendKeys(pm.getMessageTopic());
-        pmPage.getTitleField().sendKeys(pm.getMessageContent());
+        pmPage.fillToField(pm.getReceiver().getUsername());
+        pmPage.fillTitleField(pm.getMessageSubject());
+        pmPage.fillMessageField(pm.getMessageContent());
     }
 
-    private static void clickComposeMessage() {
-        pmPage.getPmNewMessageLink().click();
-    }
-
-    private static void openPrivateMessagesPage() {
+    public static boolean pmIsReceived(PrivateMessage pm) {
         mainPage.openPrivateMessages();
+        info("Checking whether the private message subject is on the page");
+        List<WebElement> pmList = pmPage.getPmList();
+
+        for(WebElement singlePmRow : pmList) {
+            if(singlePmRow.findElements(By.cssSelector("a")).get(1).getText().equals(pm.getMessageSubject())) {
+                info("The private message was found!");
+                return true;
+            }
+        }
+        LOGGER.info("Expected private message not found: {}", pm);
+        return false;
     }
+
+    public static void removePm(PrivateMessage pm) {
+        info("Removing Private Message: " + pm);
+        List<WebElement> pmList = pmPage.getPmList();
+
+        for(WebElement singlePmRow : pmList) {
+            if(singlePmRow.findElements(By.cssSelector("a")).get(1).getText().equals(pm.getMessageSubject())) {
+                info("The private message for deleting was found!");
+                singlePmRow.findElement(By.cssSelector("input")).click();
+                pmPage.getDelButton().click();
+                pmPage.getOkButtonRemovingPmDialog().click();
+                info("The private message was successfully deleted!");
+                return;
+            }
+        }
+        LOGGER.info("Expected private message not found: {}", pm);
+        throw new AssertionFailedError("Can't delete private message because it's not present on the page: " + pm);
+    }
+
+    public static boolean assertPmReceived(User receiver, PrivateMessage pm) {
+        Users.logout();
+        Users.signIn(receiver);
+        if(pmIsReceived(pm)) {
+            return true;
+        }
+        throw new AssertionFailedError(String.format("The private message is not present on the page " +
+                "(author - %1, receiver - %2, subject - %3)", pm.getAuthor(), pm.getReceiver(), pm.getMessageSubject()));
+    }
+
 }
