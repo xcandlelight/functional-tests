@@ -6,6 +6,7 @@
     <!--Creates a selenium session for tests to use-->
     <listener class-name="org.jtalks.tests.jcommune.webdriver.SeleniumSessionListener"/>
     <!--Creates HTML Reports with test steps that each test passes-->
+    <listener class-name="ru.yandex.qatools.allure.testng.AllureTestListener"/>
     <listener class-name="org.uncommons.reportng.HTMLReporter"/>
     <listener class-name="org.uncommons.reportng.JUnitXMLReporter"/>
   </listeners>
