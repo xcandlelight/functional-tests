@@ -13,47 +13,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package org.jtalks.tests.jcommune.mail.mailtrap;
+package org.jtalks.tests.jcommune.mail.pochta.exceptions;
 
 /**
- * The Data Transfer Object for message
+ * The exception for case when message was not received from JCommune
+ *
+ * @author Guram Savinov
  */
-public class Message {
-    private String id;
-    private String from_email;
-    private String subject;
-    private String text_body;
-    private String to_email;
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getFrom() {
-        return from_email;
-    }
-
-    public void setFrom(String from) {
-        this.from_email = from;
-    }
-
-    public String getTitle() {
-        return subject;
-    }
-
-    public void setTitle(String title) {
-        this.subject = title;
-    }
-
-    public String getRecipient() {
-        return to_email;
-    }
-
-    public String getSource() {
-        return text_body;
+public class MailWasNotReceivedException extends RuntimeException {
+    public MailWasNotReceivedException(Throwable cause) {
+        super("Message was not received by pochta", cause);
     }
 }
