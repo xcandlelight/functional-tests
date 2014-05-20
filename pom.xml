@@ -11,6 +11,7 @@
   <modules>
     <module>html-w3c-tests</module>
     <module>functional-tests-jcommune</module>
+    <module>functional-tests-antarcticle</module>
     <module>load-tests</module>
     <module>jcommune-webdriver</module>
   </modules>
